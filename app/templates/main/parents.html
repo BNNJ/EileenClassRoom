@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block title %}Parents - Eileen's Classroom{% endblock %}
+
+{% block content %}
+<div class="parents-page">
+    <h1>👨‍👩‍👧 Class Parents</h1>
+    <p>All parents registered in our classroom</p>
+
+    <div class="parents-grid">
+        {% for parent in parents %}
+            <div class="parent-card">
+                <div class="parent-avatar">{{ parent.name[0] }}</div>
+                <div class="parent-info">
+                    <h3>{{ parent.name }}</h3>
+                    <p class="child-name">Parent of {{ parent.child_name }}</p>
+                    <p class="email">{{ parent.email }}</p>
+                </div>
+            </div>
+        {% else %}
+            <p>No parents registered yet.</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

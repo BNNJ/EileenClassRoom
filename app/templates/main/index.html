@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block title %}Welcome - Eileen's Classroom{% endblock %}
+
+{% block content %}
+<div class="welcome">
+    <h1>🎨 Welcome to Eileen's Classroom!</h1>
+    <p class="tagline">A community space for parents to stay connected</p>
+
+    <div class="features">
+        <div class="feature">
+            <span class="feature-icon">👨‍👩‍👧</span>
+            <h3>Parent Community</h3>
+            <p>Connect with other parents in the class</p>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">📅</span>
+            <h3>Class Calendar</h3>
+            <p>Stay updated on events and activities</p>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">🍎</span>
+            <h3>Snack Duty</h3>
+            <p>Know when it's your turn to bring snacks</p>
+        </div>
+        <div class="feature">
+            <span class="feature-icon">💬</span>
+            <h3>Messages</h3>
+            <p>Communicate with the class community</p>
+        </div>
+    </div>
+
+    <div class="cta">
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-large">Join Our Class</a>
+        <a href="{{ url_for('auth.login') }}" class="btn btn-secondary btn-large">Login</a>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+
+{% block title %}Snack Duty Schedule - Eileen's Classroom{% endblock %}
+
+{% block content %}
+<div class="snack-duty-page">
+    <h1>🍎 Snack Duty Schedule</h1>
+    <p>Upcoming snack duty assignments</p>
+
+    {% if snack_events %}
+        <table class="snack-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Event</th>
+                    <th>Assigned Parent</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for event in snack_events %}
+                    <tr>
+                        <td>{{ event.date.strftime('%A, %b %d, %Y') }}</td>
+                        <td>
+                            <a href="{{ url_for('calendar.event_detail', event_id=event.id) }}">
+                                {{ event.title }}
+                            </a>
+                        </td>
+                        <td>
+                            {% if event.snack_parent %}
+                                {{ event.snack_parent.name }} ({{ event.snack_parent.child_name }}'s parent)
+                            {% else %}
+                                <span class="unassigned">Not assigned</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <div class="no-snacks">
+            <p>No upcoming snack duty events scheduled.</p>
+            <a href="{{ url_for('calendar.create') }}" class="btn btn-primary">Schedule Snack Duty</a>
+        </div>
+    {% endif %}
+
+    <div class="page-actions">
+        <a href="{{ url_for('calendar.view') }}" class="btn btn-secondary">← Back to Calendar</a>
+    </div>
+</div>
+{% endblock %}

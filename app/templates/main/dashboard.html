@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - Eileen's Classroom{% endblock %}
+
+{% block content %}
+<div class="dashboard">
+    <h1>Welcome, {{ current_user.name }}! 👋</h1>
+    <p class="subtitle">Parent of {{ current_user.child_name }}</p>
+
+    <div class="dashboard-grid">
+        <div class="card">
+            <h2>📅 Upcoming Events</h2>
+            {% if upcoming_events %}
+                <ul class="event-list">
+                    {% for event in upcoming_events %}
+                        <li>
+                            <a href="{{ url_for('calendar.event_detail', event_id=event.id) }}">
+                                <span class="event-date">{{ event.date.strftime('%b %d') }}</span>
+                                <span class="event-title">{{ event.title }}</span>
+                                {% if event.event_type == 'snack_duty' %}
+                                    <span class="badge badge-snack">🍎 Snack</span>
+                                {% endif %}
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-items">No upcoming events</p>
+            {% endif %}
+            <a href="{{ url_for('calendar.view') }}" class="btn btn-secondary">View Calendar</a>
+        </div>
+
+        <div class="card">
+            <h2>💬 Recent Messages</h2>
+            {% if recent_messages %}
+                <ul class="message-list">
+                    {% for message in recent_messages %}
+                        <li>
+                            <a href="{{ url_for('messages.view_message', message_id=message.id) }}">
+                                <span class="message-subject">{{ message.subject }}</span>
+                                <span class="message-from">from {{ message.sender.name }}</span>
+                            </a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="no-items">No messages yet</p>
+            {% endif %}
+            <a href="{{ url_for('messages.list_messages') }}" class="btn btn-secondary">View All Messages</a>
+        </div>
+
+        <div class="card card-stats">
+            <h2>📊 Class Stats</h2>
+            <div class="stat">
+                <span class="stat-number">{{ parent_count }}</span>
+                <span class="stat-label">Parents Registered</span>
+            </div>
+        </div>
+
+        <div class="card card-actions">
+            <h2>⚡ Quick Actions</h2>
+            <div class="quick-actions">
+                <a href="{{ url_for('calendar.create') }}" class="btn btn-primary">Add Event</a>
+                <a href="{{ url_for('messages.compose') }}" class="btn btn-primary">Send Message</a>
+                <a href="{{ url_for('calendar.snack_duty') }}" class="btn btn-secondary">Snack Schedule</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

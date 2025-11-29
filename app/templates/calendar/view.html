@@ -1,0 +1,57 @@
+{% extends "base.html" %}
+
+{% block title %}Calendar - Eileen's Classroom{% endblock %}
+
+{% block content %}
+<div class="calendar-page">
+    <div class="calendar-header">
+        <a href="{{ url_for('calendar.view', year=prev_year, month=prev_month) }}" class="btn btn-nav">← Previous</a>
+        <h1>{{ month_name }} {{ year }}</h1>
+        <a href="{{ url_for('calendar.view', year=next_year, month=next_month) }}" class="btn btn-nav">Next →</a>
+    </div>
+
+    <div class="calendar-actions">
+        <a href="{{ url_for('calendar.create') }}" class="btn btn-primary">+ Add Event</a>
+        <a href="{{ url_for('calendar.snack_duty') }}" class="btn btn-secondary">🍎 Snack Duty</a>
+    </div>
+
+    <table class="calendar-table">
+        <thead>
+            <tr>
+                <th>Sun</th>
+                <th>Mon</th>
+                <th>Tue</th>
+                <th>Wed</th>
+                <th>Thu</th>
+                <th>Fri</th>
+                <th>Sat</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for week in month_days %}
+                <tr>
+                    {% for day in week %}
+                        {% if day == 0 %}
+                            <td class="empty"></td>
+                        {% else %}
+                            <td class="day {% if today.year == year and today.month == month and today.day == day %}today{% endif %}">
+                                <span class="day-number">{{ day }}</span>
+                                {% if day in events_by_date %}
+                                    <div class="day-events">
+                                        {% for event in events_by_date[day] %}
+                                            <a href="{{ url_for('calendar.event_detail', event_id=event.id) }}"
+                                               class="event-chip event-{{ event.event_type }}">
+                                                {{ event.title[:15] }}{% if event.title|length > 15 %}...{% endif %}
+                                            </a>
+                                        {% endfor %}
+                                    </div>
+                                {% endif %}
+                            </td>
+                        {% endif %}
+                    {% endfor %}
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
