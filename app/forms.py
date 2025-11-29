@@ -28,7 +28,7 @@ class LoginForm(FlaskForm):
 class EventForm(FlaskForm):
     """Form for creating/editing events."""
     title = StringField('Event Title', validators=[DataRequired(), Length(max=200)])
-    description = TextAreaField('Description')
+    description = TextAreaField('Description', validators=[Length(max=5000)])
     date = DateField('Date', validators=[DataRequired()])
     event_type = SelectField('Event Type', choices=[
         ('general', 'General'),
@@ -43,4 +43,4 @@ class EventForm(FlaskForm):
 class MessageForm(FlaskForm):
     """Form for sending messages."""
     subject = StringField('Subject', validators=[DataRequired(), Length(max=200)])
-    body = TextAreaField('Message', validators=[DataRequired()])
+    body = TextAreaField('Message', validators=[DataRequired(), Length(min=1, max=10000)])
