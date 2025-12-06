@@ -1,16 +1,16 @@
-name: eileenclassroom
+name: EileenClassRoom
 
 services:
   db:
     image: postgres:16-alpine
-    container_name: eileen-db
+    container_name: ecr-db
     restart: unless-stopped
     environment:
       POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB}
       POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
     volumes:
-      - eileen_db_data:/var/lib/postgresql/data
+      - ecr_db_data:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
       interval: 5s
@@ -19,9 +19,9 @@ services:
     networks:
       - internal
 
-  backend:
+  ecr_backend:
     image: ghcr.io/bnnj/eileenclassroom-backend:${IMAGE_TAG:-latest}
-    container_name: eileen-backend
+    container_name: ecr-backend
     restart: unless-stopped
     depends_on:
       db:
@@ -38,9 +38,9 @@ services:
     expose:
       - "8000"
 
-  frontend:
+  ecr_frontend:
     image: ghcr.io/bnnj/eileenclassroom-frontend:${IMAGE_TAG:-latest}
-    container_name: eileen-frontend
+    container_name: ecr-frontend
     restart: unless-stopped
     networks:
       - proxy
@@ -48,11 +48,11 @@ services:
       - "80"
 
 volumes:
-  eileen_db_data:
+  ecr_db_data:
 
 networks:
   internal:
-    name: eileen-internal
+    name: ecr-internal
   proxy:
     external: true
     name: proxy
