@@ -19,7 +19,7 @@ services:
       dockerfile: Dockerfile
     container_name: eileenclassroom_backend
     environment:
-      DATABASE_URL: postgresql://eileenuser:eileenpass@db:5432/eileenclassroom
+      DATABASE_URL: postgresql+psycopg://eileenuser:eileenpass@db:5432/eileenclassroom
       SECRET_KEY: ${SECRET_KEY:-change-me-in-production}
       FRONTEND_URL: http://localhost:5173
     ports:

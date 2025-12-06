@@ -23,5 +23,5 @@ def get_db() -> Generator[Session, None, None]:
     Yields:
         Database session that is automatically closed after use.
     """
-    with Session(engine, autoflush=False, autocommit=False) as session:
+    with Session(engine, autoflush=False) as session:
         yield session
