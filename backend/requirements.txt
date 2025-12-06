@@ -6,7 +6,7 @@ uvicorn[standard]==0.24.0
 # Database
 sqlalchemy==2.0.23
 alembic==1.12.1
-psycopg2-binary==2.9.9
+psycopg[binary]==3.3.1
 
 # Authentication & Security (uncomment when implementing auth)
 python-jose[cryptography]==3.3.0
@@ -19,7 +19,7 @@ pydantic-settings==2.1.0
 # email-validator==2.1.0
 
 # WebSockets
-websockets==12.0
+websockets==15.0.1
 
 # Testing
 pytest==7.4.3

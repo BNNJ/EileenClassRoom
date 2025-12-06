@@ -1,0 +1,58 @@
+name: eileenclassroom
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: eileen-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:?set POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER:?set POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}
+    volumes:
+      - eileen_db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+    networks:
+      - internal
+
+  backend:
+    image: ghcr.io/bnnj/eileenclassroom-backend:${IMAGE_TAG:-latest}
+    container_name: eileen-backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql+psycopg://${POSTGRES_USER:?set POSTGRES_USER}:${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB:?set POSTGRES_DB}
+      ENVIRONMENT: ${ENVIRONMENT:-production}
+      SECRET_KEY: ${SECRET_KEY:?set SECRET_KEY in .env}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+    networks:
+      - internal
+      - proxy
+    expose:
+      - "8000"
+
+  frontend:
+    image: ghcr.io/bnnj/eileenclassroom-frontend:${IMAGE_TAG:-latest}
+    container_name: eileen-frontend
+    restart: unless-stopped
+    networks:
+      - proxy
+    expose:
+      - "80"
+
+volumes:
+  eileen_db_data:
+
+networks:
+  internal:
+    name: eileen-internal
+  reverse-proxy:
+    external: true
+    name: proxy
