@@ -1,5 +1,6 @@
 """FastAPI application initialization."""
 
+import os
 from fastapi import FastAPI
 
 from app.api.health import router as health_router
@@ -11,8 +12,12 @@ from app.api.health import router as health_router
 app = FastAPI(
     title="EileenClassRoom API",
     description="Class management API for preschool parents",
-    version="0.1.0",
+    version=os.getenv("API_VERSION", "dev"),
+    docs_url="/api/docs",
+    redoc_url="/api/redoc",
+    openapi_url="/api/openapi.json",
 )
+
 
 # Configure CORS
 # app.add_middleware(

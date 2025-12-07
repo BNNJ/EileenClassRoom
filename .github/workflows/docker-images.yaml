@@ -34,6 +34,8 @@ jobs:
           tags: |
             ghcr.io/bnnj/eileenclassroom-backend:${{ env.IMAGE_TAG }}
             ghcr.io/bnnj/eileenclassroom-backend:latest
+          build-args: |
+            APP_VERSION=${{ github.ref_name }}
 
       - name: Frontend - build and push
         uses: docker/build-push-action@v6
