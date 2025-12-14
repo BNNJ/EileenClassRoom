@@ -61,7 +61,11 @@ class Settings(BaseSettings):
                 self.SECRET_KEY = loaded_secret_key
 
         if not self.SECRET_KEY:
-            raise ValueError("SECRET_KEY (or SECRET_KEY_FILE) must be set")
+            if self.ENVIRONMENT in {"development", "test"}:
+                # WARNING: insecure default, fine for local / CI only
+                self.SECRET_KEY = "dev-insecure-secret-change-me"
+            else:
+                raise ValueError("SECRET_KEY (or SECRET_KEY_FILE) must be set")
 
         # 2) Fill DB_PASSWORD from DB_PASSWORD_FILE if needed
         if not self.DB_PASSWORD:
