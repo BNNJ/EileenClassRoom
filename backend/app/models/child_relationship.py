@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from enum import Enum
 
-from sqlalchemy import Boolean, DateTime, ForeignKey, String, func
+from sqlalchemy import Boolean, DateTime, ForeignKey, String, func, false, true
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -39,19 +39,25 @@ class ChildRelationship(Base):
     relationship_type: Mapped[str] = mapped_column(
         String(32),
         nullable=False,
-        default=ChildRelationshipType.guardian.value,
+        server_default=ChildRelationshipType.guardian.value,
     )
 
     is_primary_contact: Mapped[bool] = mapped_column(
         Boolean,
         nullable=False,
-        server_default="false",
+        server_default=false(),
     )
 
     created_at: Mapped[datetime] = mapped_column(
         DateTime(timezone=True),
         nullable=False,
         server_default=func.now(),
+    )
+    updated_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True),
+        nullable=False,
+        server_default=func.now(),
+        onupdate=func.now(),
     )
 
     # Bidirectional links

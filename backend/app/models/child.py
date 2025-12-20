@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import date, datetime
-from enum import Enum
 
 from sqlalchemy import Date, DateTime, ForeignKey, Integer, String, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship

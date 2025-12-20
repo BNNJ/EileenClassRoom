@@ -1,0 +1,84 @@
+name: EileenClassRoom-dev
+
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres_password
+    secrets:
+      - postgres_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    secrets:
+      - postgres_password
+      - secret_key
+    environment:
+      # Use DB_* components like prod
+      DB_HOST: db
+      DB_PORT: "5432"
+      DB_NAME: ${POSTGRES_DB}
+      DB_USER: ${POSTGRES_USER}
+      DB_PASSWORD_FILE: /run/secrets/postgres_password
+
+      SECRET_KEY_FILE: /run/secrets/secret_key
+      ENVIRONMENT: ${ENVIRONMENT}
+      ACCESS_TOKEN_EXPIRE_MINUTES: ${ACCESS_TOKEN_EXPIRE_MINUTES:-60}
+      FRONTEND_URL: ${FRONTEND_URL}
+    ports:
+      - "8000:8000"
+    networks:
+      - internal
+    volumes:
+      - ./backend:/app
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
+
+  frontend:
+    image: node:20-alpine
+    working_dir: /app
+    restart: unless-stopped
+    depends_on:
+      - backend
+    environment:
+      # typical Vite env var naming
+      VITE_API_BASE_URL: http://localhost:8000
+    ports:
+      - "5173:5173"
+    networks:
+      - internal
+    volumes:
+      - ./frontend:/app
+    command: sh -c "npm install && npm run dev -- --host 0.0.0.0 --port 5173"
+
+volumes:
+  postgres_data:
+
+networks:
+  internal:
+    driver: bridge
+
+secrets:
+  postgres_password:
+    file: ./secrets/postgres_password
+  secret_key:
+    file: ./secrets/secret_key
